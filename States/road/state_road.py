@@ -5,7 +5,7 @@ import os
 
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import load_model
+import playutils
 
 params = {    
     "nnsize" : 256
@@ -16,7 +16,7 @@ prev_time_road = 0
 
 script_directory = os.path.dirname(__file__)
 
-model = load_model(os.path.join(script_directory, "road.h5"))
+model = playutils.load_model_safe(os.path.join(script_directory, "road.h5"))
 
 state = "normal"
 nnresult = 0

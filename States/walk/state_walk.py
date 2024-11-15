@@ -1,13 +1,13 @@
 import time
 import os
-from game import playutils
+import playutils
 
 import globals
-from States.find_enemy import state_find_enemy
-from States.horizont import state_horizont
-from States.stuck import state_stuck
-from States.road import state_road
-from States.reset import state_reset
+from states.find_enemy import state_find_enemy
+from states.horizont import state_horizont
+from states.stuck import state_stuck
+from states.road import state_road
+from states.reset import state_reset
 
 params = {
     

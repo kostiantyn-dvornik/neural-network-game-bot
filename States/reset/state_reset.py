@@ -1,8 +1,7 @@
 import time
 import os
 import globals
-
-from game import playutils
+import playutils
 
 params = {    
     

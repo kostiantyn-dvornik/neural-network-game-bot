@@ -1,13 +1,15 @@
+import os
+import sys
+script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+global_dir = os.path.join(script_dir, "..")
+sys.path.append(global_dir)
+
 import time
 import keyboard
-import sys
-import os
-
-#NN
 import pygetwindow as gw
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import load_model
+import playutils
 from PIL import ImageGrab
 
 #[use]
@@ -102,7 +104,7 @@ def main():
 #Main flow
 set_global_params()
 print("Loading model...")
-new_model = load_model(model_path)
+new_model = playutils.load_model_safe(model_path)
 
 print("Press ENTER to start")
 keyboard.wait("enter")

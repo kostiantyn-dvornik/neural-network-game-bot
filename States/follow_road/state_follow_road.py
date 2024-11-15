@@ -4,19 +4,20 @@ import time
 import os
 
 import threading
-from game import playutils
+import playutils
 import globals
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import load_model
+
+from globals import logging as log
 
 import win32api
 import win32con
 
-from States.hit_enemy import state_hit_enemy
-from States.horizont import state_horizont
-from States.road import state_road
-from States.horizont import state_horizont
+from states.hit_enemy import state_hit_enemy
+from states.horizont import state_horizont
+from states.road import state_road
+from states.horizont import state_horizont
 
 params = {    
     "nnsize" : 256
@@ -30,7 +31,7 @@ prev_time_nocheck = 0
 
 script_directory = os.path.dirname(__file__)
 
-model = load_model(os.path.join(script_directory, "follow_road.h5"))
+model = playutils.load_model_safe(os.path.join(script_directory, "follow_road.h5"))
 
 state = "normal"
 
@@ -86,7 +87,7 @@ def on_stop():
     global is_trainsitin_thread
     is_trainsitin_thread.join()
 
-    print(os.path.basename(__file__) + " stopped")
+    log.info(os.path.basename(__file__) + " stopped")
     
 def is_trainsitin():    
     
@@ -114,7 +115,7 @@ def is_trainsitin():
     global nnresult
     nnresult = ind
     
-    print("Follow road " + str(ind) + " " + str(time.time()))
+    log.info(f"Follow road {ind} {time.time()}")
 
     return ind == 1 or ind == 2
 
@@ -184,11 +185,11 @@ def update():
                 prev_time_state = time.time()                
                 res = nnresult                                    
                 if res == 1:
-                    print("Enter turn left")
+                    log.debug("Transit turn left")
                     set_state("turn_left")
                     return
                 elif res == 2:
-                    print("Enter turn right")
+                    log.debug("Transit turn right")
                     set_state("turn_right")
                     return
                 
@@ -207,7 +208,7 @@ def update():
             
             res = nnresult                                    
             if res == 0:
-                print("Enter move forward state")
+                log.debug("Transit Move forward state")
                 set_state("normal")
             elif res == 2:
                 set_state("turn_right")
@@ -227,7 +228,7 @@ def update():
             
             res = nnresult                                    
             if res == 0:
-                print("Enter move forward state")
+                log.debug("Transit move forward state")
                 set_state("normal")
             elif res == 1:
                 set_state("turn_left")

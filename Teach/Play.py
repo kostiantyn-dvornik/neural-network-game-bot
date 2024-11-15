@@ -7,7 +7,7 @@ sys.path.append(global_dir)
 
 import pydirectinput
 import keyboard
-from game import playutils
+import playutils
 
 current_actionindex = 0
 

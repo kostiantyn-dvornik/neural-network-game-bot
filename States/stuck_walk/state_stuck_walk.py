@@ -2,8 +2,8 @@ import time
 import os
 
 import globals
-from game import playutils
-from States.horizont import state_horizont
+import playutils
+from states.horizont import state_horizont
 
 params = {        
 }

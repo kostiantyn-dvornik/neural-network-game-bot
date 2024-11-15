@@ -4,10 +4,9 @@ import time
 import os
 
 import globals
-from game import playutils
+import playutils
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import load_model
 
 params = {
     "posx" : 464,
@@ -21,7 +20,7 @@ prev_time = time.time()
 
 script_directory = os.path.dirname(__file__)
 
-model = load_model(os.path.join(script_directory, "hit_enemy.h5"))
+model = playutils.load_model_safe(os.path.join(script_directory, "hit_enemy.h5"))
 
 #
 playback_current = ""

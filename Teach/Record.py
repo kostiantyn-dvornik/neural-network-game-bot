@@ -13,11 +13,8 @@ from ctypes import wintypes
 
 import keyboard
 import pydirectinput
-
 import time
-
-from game import playutils
-
+import playutils
 import threading
 
 lock = threading.Lock()

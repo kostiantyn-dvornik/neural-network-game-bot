@@ -6,7 +6,7 @@ import os
 import globals
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import load_model
+import playutils
 
 import win32api
 import win32con
@@ -25,7 +25,7 @@ prev_time_move = 0
 
 script_directory = os.path.dirname(__file__)
 
-model = load_model(os.path.join(script_directory, "stuck.h5"))
+model = playutils.load_model_safe(os.path.join(script_directory, "stuck.h5"))
 
 def on_transit_in():
     global prev_time, prev_time_move

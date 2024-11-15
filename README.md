@@ -1,5 +1,5 @@
 # neural-network-game-bot
-Tool for record and playback game input based on neural networks image classification. Suitable for autotesting games
+Tool for record and playback game input based on neural networks image classification. Suitable for autotesting games, creating vison based bots
 
 # Overview
 https://www.youtube.com/watch?v=RrRIE1z0XGw
@@ -21,12 +21,12 @@ https://learn.microsoft.com/en-us/windows/ai/directml/gpu-tensorflow-plugin
 
 # Getting Started
 1. Put NN.txt in root of Skyrim. It contains console commands to set daytime, endless HP etc.
-1. Run Skyrim in window mode 1440x810
+1. Run Skyrim in window mode 1440x810 on primary monitor
 1. Hit toggle and enter bat NN it will run scipt to have same conditions
 1. Use non snow location
-1. Run Bot.py
+1. Run Bot.py (preffered to use visual studio code)
 1. Hit Skyrim windows to make it active
-1. Press enter to start autoplayback
+1. Press ENTER to start autoplayback
 
 # Changlelog
 2023.07 

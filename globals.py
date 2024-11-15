@@ -1,6 +1,11 @@
 import sys
 import os
+import logging
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+# logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-CURRENT_STATE = "follow_road"
+script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+sys.path.append(script_dir)
+
+CURRENT_STATE = "walk"

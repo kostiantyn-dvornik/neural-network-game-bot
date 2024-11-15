@@ -5,7 +5,7 @@ import os
 
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import load_model
+import playutils
 
 import win32api
 import win32con
@@ -18,7 +18,7 @@ prev_time = 0
 
 script_directory = os.path.dirname(__file__)
 
-model = load_model(os.path.join(script_directory, "horizont.h5"))
+model = playutils.load_model_safe(os.path.join(script_directory, "horizont.h5"))
 
 prev_time_move = 0
 
@@ -68,7 +68,7 @@ def is_trainsitin():
     res = yhat[0]        
     ind = np.argmax(res)
 
-    print('Horizont result ' + str(ind))
+    print('Horizont ' + str(ind))
 
     global nnresult
     nnresult = ind

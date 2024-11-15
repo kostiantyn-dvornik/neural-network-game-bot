@@ -1,22 +1,20 @@
-import tensorflow as tf
 import os
-import cv2
-from matplotlib import pyplot as plt
-import numpy as np
 import sys
-
-#[use]
-state = "road"
-
-script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-state_dir = os.path.join(script_directory, "..", "States", state)
-sys.path.append(state_dir)
-
-global_dir = os.path.join(script_directory, "..")
+script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+global_dir = os.path.join(script_dir, "..")
 sys.path.append(global_dir)
 
+import tensorflow as tf
+from matplotlib import pyplot as plt
+
+#[use]
+state = "horizont"
+
+state_dir = os.path.join(script_dir, "..", "states", state)
+sys.path.append(state_dir)
+
 #[gen]
-import state_road as st
+import state_horizont as st
 
 params = st.params
 
@@ -28,7 +26,7 @@ grabsize = params.get('grabsize', 0)
 
 dataset_dir = ""
 
-def set_global_params():
+def set_nn_params():
     global dataset_dir, nn_outputs
     
     for folder_name in os.listdir(state_dir):
@@ -48,7 +46,7 @@ def set_global_params():
             return                
                         
 #main flow                        
-set_global_params()
+set_nn_params()
 
 data = tf.keras.utils.image_dataset_from_directory(
     dataset_dir,
@@ -95,7 +93,7 @@ model.add(Dense(nn_outputs, activation='softmax'))
 model.compile('adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), metrics=['accuracy'])
 print(model.summary() )
 
-logdir=os.path.join(script_directory,'logs')
+logdir=os.path.join(script_dir,'logs')
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
 
 hist = model.fit(train, epochs=30, validation_data=val, callbacks=[tensorboard_callback])
