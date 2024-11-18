@@ -74,7 +74,7 @@ def crop_image(image_path, crop_point=(0, 0), crop_size=(128, 128), target_size=
         
         # Crop the image
         cropped_img = img.crop((x, y, x + crop_size[0], y + crop_size[1]))
-        resized_img = img.resize(target_size)
+        resized_img = cropped_img.resize(target_size)
         
         if processed_images == 0:
             processed_images += 1
@@ -111,10 +111,6 @@ def check_images_resolution(folder_path):
                     print(f"Could not open {file}: {e}")
 
 set_nn_params()
-# if grabsize == 0:
-#     print("Dataset have full image size")
-#     sys.exit()
-# else:
-print("Press F7 to start State: " + state + " " + str(grabsize))
-keyboard.wait("f7")    
+print(f"Press F7 to process {state} images")
+keyboard.wait("f7")
 check_images_resolution(dataset_dir)
