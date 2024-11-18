@@ -19,13 +19,13 @@ grabsize = 0
 dataset_dir = ""
 
 #[use]
-state = "stuck"
+state = "find_enemy"
 
-state_dir = os.path.join(script_dir, "..", "States", state)
+state_dir = os.path.join(script_dir, "..", "states", state)
 sys.path.append(state_dir)
 
 #[gen]
-import state_stuck as st
+import state_find_enemy as st
 
 params = st.params
 nnsize = params.get('nnsize', 256)
@@ -60,35 +60,36 @@ def get_image_resolution(image_path):
     with Image.open(image_path) as img:
         return img.size  # (width, height)
 
-def crop_image(image_path, crop_point=(0, 0), target_size=(128, 128)):
+def crop_image(image_path, crop_point=(0, 0), crop_size=(128, 128), target_size=(128,128)):
     global processed_images
     with Image.open(image_path) as img:
         width, height = img.size
         x, y = crop_point
 
         # Ensure the crop area doesn't exceed image bounds
-        if x + target_size[0] > width:
-            x = width - target_size[0]
-        if y + target_size[1] > height:
-            y = height - target_size[1]
+        if x + crop_size[0] > width:
+            x = width - crop_size[0]
+        if y + crop_size[1] > height:
+            y = height - crop_size[1]
         
         # Crop the image
-        cropped_img = img.crop((x, y, x + target_size[0], y + target_size[1]))
+        cropped_img = img.crop((x, y, x + crop_size[0], y + crop_size[1]))
+        resized_img = img.resize(target_size)
         
         if processed_images == 0:
             processed_images += 1
              # Show preview of cropped image
-            cropped_img.show()  # This will open the image in the default viewer
+            resized_img.show()  # This will open the image in the default viewer
             
             # Ask user if they want to save the cropped image
             save_choice = input(f"Do you want to save the cropped image {image_path}? (y/n): ").strip().lower()
             if save_choice == 'y':
-                cropped_img.save(image_path)  # Overwrites the original image
+                resized_img.save(image_path)  # Overwrites the original image
                 print(f"Cropped image saved at {image_path}")
             else:
                 print(f"Cropped image not saved for {image_path}")
         else:
-            cropped_img.save(image_path)  # Overwrites the original image
+            resized_img.save(image_path)  # Overwrites the original image
             processed_images += 1
 
 # Function to iterate through files in folder recursively
@@ -102,18 +103,18 @@ def check_images_resolution(folder_path):
                     print(f"Image: {file}, Resolution: {resolution}")
 
                     # Check if resolution is wrong
-                    if resolution != (grabsize, grabsize):
-                        print(f"Cropping {file} from point {(posx,posy)}")
-                        crop_image(image_path, (posx,posy), (grabsize,grabsize))
+                    if resolution != (nnsize, nnsize):
+                        print(f"Cropping {file} from point {(posx, posy)}")
+                        crop_image(image_path, (posx, posy), (grabsize, grabsize), (nnsize, nnsize))
 
                 except Exception as e:
                     print(f"Could not open {file}: {e}")
 
 set_nn_params()
-if grabsize == 0:
-    print("Dataset have full image size")
-    sys.exit()
-else:
-    print("Press F7 to start State: " + state + " " + str(grabsize))
-    keyboard.wait("f7")    
-    check_images_resolution(dataset_dir)
+# if grabsize == 0:
+#     print("Dataset have full image size")
+#     sys.exit()
+# else:
+print("Press F7 to start State: " + state + " " + str(grabsize))
+keyboard.wait("f7")    
+check_images_resolution(dataset_dir)
