@@ -3,6 +3,11 @@ import playutils
 import sys
 import keyboard
 import pydirectinput
+from PIL import Image
+import pygetwindow as gw
+import time
+import threading
+import mss
 
 from globals import logging as log
 
@@ -32,16 +37,30 @@ states = {
 
 paused = False
 local_state = ""
+prev_time_screenshot = time.time()
+
+window = None
+winRect = None
+
+def on_stop():
+    states[local_state].on_stop()
+        
+    log.info("Stopped")
+    playutils.keys_up() 
+
+    global stop_grab_screen_thread_func
+    stop_grab_screen_thread_func = True
+
+    global grab_screen_thread
+    grab_screen_thread.join()
+
+    sys.exit()
 
 def stop():
     global paused
 
     if keyboard.is_pressed("f4"):        
-        states[local_state].on_stop()
-        
-        log.info("Stopped")
-        playutils.keys_up()    
-        sys.exit()
+        on_stop()
 
     if keyboard.is_pressed("f7"):
         if not paused:
@@ -52,7 +71,26 @@ def stop():
             log.info("Continue")        
             paused = False
 
-def start():    
+def grab_screenshot():    
+    global winRect
+    with mss.mss() as sct:
+        screenshot = sct.grab(winRect)
+
+        # Convert the raw bytes to a Pillow Image
+        img = Image.frombytes("RGB", screenshot.size, screenshot.rgb)
+
+        with globals.SCREENSHOT_LOCK:
+            globals.SCREENSHOT = img
+        # log.info(f"Grab {time.time()}")
+
+def start(): 
+    global window, winRect
+    window = gw.getWindowsWithTitle('Skyrim')[0]
+    winRect = {"top": window.top + 2, "left": window.left + 2, "width": window.right - window.left - 4, "height": window.bottom - window.top - 4}
+    
+    grab_screenshot() 
+    grab_screen_thread.start()
+
     for state in states.values():
         state.start()
 
@@ -74,10 +112,20 @@ def update():
         transit_in()
     
     states[globals.CURRENT_STATE].update()
+    time.sleep(0.01)   
+
+stop_grab_screen_thread_func = False
+def grab_screen_thread_func():
+    global stop_grab_screen_thread_func
+    while not stop_grab_screen_thread_func:                
+        grab_screenshot()
+        time.sleep(0.02)
+grab_screen_thread = threading.Thread(target=grab_screen_thread_func, daemon=True)
 
 def main():
     local_state = globals.CURRENT_STATE
     start()
+    
 
     while True:
         stop()

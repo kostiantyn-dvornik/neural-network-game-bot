@@ -15,13 +15,14 @@ This tool is a game input recorder and player. The tool allows you to record inp
 
 # Installation
 - Python 3.10
-- pip install tensorflow-cpu==2.10 tensorflow-directml-plugin opencv-python matplotlib
+- pip install tensorflow-cpu==2.10 tensorflow-directml-plugin opencv-python matplotlib mss
 - DX12 support for GPU training and execution acceleration
 https://learn.microsoft.com/en-us/windows/ai/directml/gpu-tensorflow-plugin
 
 # Getting Started
 1. Put NN.txt in root of Skyrim. It contains console commands to set daytime, endless HP etc.
-1. Run Skyrim in window mode 1440x810 on primary monitor
+1. Run Skyrim in window mode 1440x810 on primary monitor. 
+1. Don't use scaling in windows it will result wrong screenshot capture
 1. Hit toggle and enter bat NN it will run scipt to have same conditions
 1. Use non snow location
 1. Run Bot.py (preffered to use visual studio code)

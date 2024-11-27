@@ -1,4 +1,4 @@
-wait 0.1
+wait 0.01
 key_state w True
 wait 0.8526961803436279
 mouse_move 2 1

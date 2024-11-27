@@ -2,6 +2,7 @@ from PIL import ImageGrab
 import pygetwindow as gw
 import time
 import os
+import globals
 
 import tensorflow as tf
 import numpy as np
@@ -14,9 +15,9 @@ params = {
 prev_time = 0
 prev_time_road = 0
 
-script_directory = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
-model = playutils.load_model_safe(os.path.join(script_directory, "road.h5"))
+model = playutils.load_model_safe(os.path.join(script_dir, "road.h5"))
 
 state = "normal"
 nnresult = 0
@@ -34,13 +35,10 @@ def on_transit_in():
 def on_stop():
     print(os.path.basename(__file__) + " stopped")
 
-def is_trainsitin():    
+def is_transit_in():    
     global nnresult
 
-    window = gw.getWindowsWithTitle('Skyrim')[0]
-    winRect = [window.left+2, window.top+2, window.right-2, window.bottom-2]
-
-    img = ImageGrab.grab(winRect)
+    img = globals.SCREENSHOT
 
     if 'grabsize' in params:
         crop_area = (params['posx'], params['posy'], params['posx'] + params['grabsize'], params['posy'] + params['grabsize'])

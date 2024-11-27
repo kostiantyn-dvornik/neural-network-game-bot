@@ -10,7 +10,7 @@ params = {
 
 prev_time = 0
 
-script_directory = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
 playback_current = ""
 playback_recordings = []
@@ -27,14 +27,13 @@ def on_transit_in():
 def on_stop():
     print(os.path.basename(__file__) + " stopped")
 
-def is_trainsitin():
+def is_transit_in():
     return False
     
 def start():
     global playback_recordings    
-    playback_recordings = playutils.initialize_playbacks(script_directory)
+    playback_recordings = playutils.initialize_playbacks(script_dir)
     on_transit_in()
-    state_horizont.start()
 
 def process_playback():
     global action_lines, current_action_index, prev_time, playback_current

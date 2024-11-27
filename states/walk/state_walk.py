@@ -15,7 +15,7 @@ params = {
 
 prev_time = time.time()
 
-script_directory = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
 playback_current = ""
 playback_recordings = []
@@ -34,10 +34,8 @@ def on_stop():
 def start():  
     global playback_recordings, playback_current, action_lines
     
-    playback_recordings = playutils.initialize_playbacks(script_directory)
+    playback_recordings = playutils.initialize_playbacks(script_dir)
     action_lines, playback_current = playutils.load_playback(playback_recordings, playback_current)
-    
-    state_horizont.start()
 
 def process_playback():
     global action_lines, current_action_index, prev_time, playback_current
@@ -58,22 +56,22 @@ def process_transitions():
     elapsed_time = time.time() - prev_time
     if elapsed_time > 1:        
         
-        if state_find_enemy.is_trainsitin():            
+        if state_find_enemy.is_transit_in():            
             globals.CURRENT_STATE = "find_enemy"
             playutils.keys_up()
             return
         
-        if state_stuck.is_trainsitin():            
+        if state_stuck.is_transit_in():            
             globals.CURRENT_STATE = "stuck"
             playutils.keys_up()
             return
         
-        if state_road.is_trainsitin():            
+        if state_road.is_transit_in():            
             globals.CURRENT_STATE = "follow_road"
             playutils.keys_up()
             return
         
-        if state_reset.is_trainsitin():            
+        if state_reset.is_transit_in():            
             globals.CURRENT_STATE = "reset"
             playutils.keys_up()
             return

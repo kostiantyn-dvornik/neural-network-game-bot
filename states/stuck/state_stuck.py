@@ -23,9 +23,9 @@ params = {
 prev_time = 0
 prev_time_move = 0
 
-script_directory = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
-model = playutils.load_model_safe(os.path.join(script_directory, "stuck.h5"))
+model = playutils.load_model_safe(os.path.join(script_dir, "stuck.h5"))
 
 def on_transit_in():
     global prev_time, prev_time_move
@@ -35,12 +35,9 @@ def on_transit_in():
 def on_stop():
     print(os.path.basename(__file__) + " stopped")
 
-def is_trainsitin():
+def is_transit_in():
 
-    window = gw.getWindowsWithTitle('Skyrim')[0]
-    winRect = [window.left+2, window.top+2, window.right-2, window.bottom-2]
-
-    img = ImageGrab.grab(winRect)
+    img = globals.SCREENSHOT
 
     if 'grabsize' in params:
         crop_area = (params['posx'], params['posy'], params['posx'] + params['grabsize'], params['posy'] + params['grabsize'])
@@ -82,5 +79,5 @@ def update():
     elapsed_time = time.time() - prev_time
     if elapsed_time > 2:
         prev_time = time.time()
-        if not is_trainsitin(): 
+        if not is_transit_in(): 
             globals.CURRENT_STATE = "stuck_walk"                 

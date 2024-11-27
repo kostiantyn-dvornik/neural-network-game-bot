@@ -1,8 +1,8 @@
 import sys
 import os
-script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
-global_dir = os.path.join(script_directory, "..")
+global_dir = os.path.join(script_dir, "..")
 sys.path.append(global_dir)
 
 import ctypes
@@ -183,7 +183,7 @@ def stop_script():
         #     thread.join() 
 
         # Open the file in write mode and save the list
-        with open(os.path.join(script_directory,"state_test_1.gamerec"), 'w') as file:
+        with open(os.path.join(script_dir,"state_test_1.gamerec"), 'w') as file:
             for line in action_list:
                 file.write(line + '\n')  # Write each line followed by a newline character
 
@@ -252,11 +252,11 @@ def fill_initial_states():
     for key in playutils.keys:
         keys_states.append(False) 
 
-if __name__ == '__main__':
-    print("Press ENTER to start")
-    keyboard.wait("enter")
-    print("Started. Press F4 to stop")
-    time.sleep(0.5) #prevent ENTER to be part of recording
-    fill_initial_states()
-    prev_time = time.time()
-    main()
+
+print("Press ENTER to start")
+keyboard.wait("enter")
+print("Started. Press F4 to stop")
+time.sleep(0.5) #prevent ENTER to be part of recording
+fill_initial_states()
+prev_time = time.time()
+main()

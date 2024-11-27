@@ -1,8 +1,8 @@
 import sys
 import os
-script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
-global_dir = os.path.join(script_directory, "..")
+global_dir = os.path.join(script_dir, "..")
 sys.path.append(global_dir)
 
 import pydirectinput
@@ -26,7 +26,7 @@ def process_record(actions):
         playutils.process_action(current_action)  
 
 def main():            
-    playback_current = os.path.join(script_directory,"state_test_1.gamerec")
+    playback_current = os.path.join(script_dir,"state_test_1.gamerec")
     
     with open(playback_current, 'r') as file:
         lines = file.readlines()

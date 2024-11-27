@@ -1,7 +1,7 @@
-from PIL import ImageGrab
-import pygetwindow as gw
 import time
 import os
+import globals
+import threading
 
 import tensorflow as tf
 import numpy as np
@@ -16,9 +16,9 @@ params = {
 
 prev_time = 0
 
-script_directory = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
-model = playutils.load_model_safe(os.path.join(script_directory, "horizont.h5"))
+model = playutils.load_model_safe(os.path.join(script_dir, "horizont.h5"))
 
 prev_time_move = 0
 
@@ -31,10 +31,24 @@ def on_transit_in():
     prev_time_move = time.time()
 
 def on_stop():
+    global stop_detect_thread_func
+    stop_detect_thread_func = True
+
+    global detect_thread
+    detect_thread.join()
+
     print(os.path.basename(__file__) + " stopped")
 
 def start():
+
     on_transit_in()
+
+    global detect_thread
+    detect_thread = threading.Thread(target=detect_thread_func, daemon=True)
+    detect_thread.start()
+
+    global stop_detect_thread_func
+    stop_detect_thread_func = False
            
 def set_state(current_state):
     global state, prev_time, prev_time_move
@@ -43,11 +57,16 @@ def set_state(current_state):
     prev_time = time.time()
     prev_time_move = time.time()
 
-def is_trainsitin():
-    window = gw.getWindowsWithTitle('Skyrim')[0]
-    winRect = [window.left+2, window.top+2, window.right-2, window.bottom-2]
+stop_detect_thread_func = False
+def detect_thread_func():
+    global stop_detect_thread_func
+    while not stop_detect_thread_func:                
+        is_transit_in()
+        time.sleep(0.5)
 
-    img = ImageGrab.grab(winRect)
+def is_transit_in():
+    
+    img = globals.SCREENSHOT
 
     if 'grabsize' in params:
         crop_area = (params['posx'], params['posy'], params['posx'] + params['grabsize'], params['posy'] + params['grabsize'])
@@ -78,43 +97,33 @@ def is_trainsitin():
 def update():
     global prev_time, prev_time_move, nnresult
 
-    if state == "normal":
-        elapsed_time = time.time() - prev_time
-        if elapsed_time > 2:
+    if state == "normal":        
+        if (time.time() - prev_time) > 2:
             prev_time = time.time()
-            
-            is_trainsitin()
-
             if nnresult == 1:
                 set_state("up")
             elif nnresult == 2:
                 set_state("down")
             
-    elif state == "up":        
-        elapsed_time_move = time.time() - prev_time_move
-        if elapsed_time_move > 0.01:        
+    elif state == "up":                
+        if (time.time() - prev_time_move) > 0.01:        
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 5)            
             prev_time_move = time.time()
         
-        elapsed_time = time.time() - prev_time
-        if elapsed_time > 0.5:
+        if (time.time() - prev_time) > 0.5:
             prev_time = time.time()
-            is_trainsitin()
             if nnresult == 0:
                 set_state("normal")
             elif nnresult == 2:
                 set_state("down")                      
 
-    elif state == "down":
-        elapsed_time_move = time.time() - prev_time_move
-        if elapsed_time_move > 0.01:        
+    elif state == "down":        
+        if (time.time() - prev_time_move) > 0.01:        
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -5)            
             prev_time_move = time.time()
-
-        elapsed_time = time.time() - prev_time
-        if elapsed_time > 0.5:
-            prev_time = time.time()
-            is_trainsitin()
+        
+        if (time.time() - prev_time) > 0.5:
+            prev_time = time.time()            
             if nnresult == 0:
                 set_state("normal")
             elif nnresult == 1:

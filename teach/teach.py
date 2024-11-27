@@ -1,6 +1,6 @@
 import os
 import sys
-script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+script_dir = os.path.dirname(os.path.realpath(__file__))
 global_dir = os.path.join(script_dir, "..")
 sys.path.append(global_dir)
 

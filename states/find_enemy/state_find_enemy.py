@@ -25,9 +25,9 @@ prev_time = 0
 prev_time_move = 0
 prev_time_walk = 0
 
-script_directory = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
-model = playutils.load_model_safe(os.path.join(script_directory, "find_enemy.h5"))
+model = playutils.load_model_safe(os.path.join(script_dir, "find_enemy.h5"))
 
 def on_transit_in():
     global prev_time
@@ -42,12 +42,9 @@ def on_transit_in():
 def on_stop():
     print(os.path.basename(__file__) + " stopped")
 
-def is_trainsitin():
+def is_transit_in():
 
-    window = gw.getWindowsWithTitle('Skyrim')[0]
-    winRect = [window.left+2, window.top+2, window.right-2, window.bottom-2]
-
-    img = ImageGrab.grab(winRect)
+    img = globals.SCREENSHOT
 
     if 'grabsize' in params:
         crop_area = (params['posx'], params['posy'], params['posx'] + params['grabsize'], params['posy'] + params['grabsize'])
@@ -88,13 +85,13 @@ def update():
     elapsed_time = time.time() - prev_time
     if elapsed_time > 0.5:
         prev_time = time.time()
-        if state_hit_enemy.is_trainsitin(): 
+        if state_hit_enemy.is_transit_in(): 
             globals.CURRENT_STATE = "hit_enemy"
 
     global prev_time_walk
     elapsed_time__walk = time.time() - prev_time_walk
     if elapsed_time__walk > 1:
-        if  not is_trainsitin():
+        if  not is_transit_in():
             globals.CURRENT_STATE = "walk"
             playutils.keys_up()
             
