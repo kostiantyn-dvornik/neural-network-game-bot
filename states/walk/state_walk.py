@@ -3,6 +3,10 @@ import os
 import playutils
 
 import globals
+import threading
+
+from globals import logging as log
+
 from states.find_enemy import state_find_enemy
 from states.horizont import state_horizont
 from states.stuck import state_stuck
@@ -28,14 +32,50 @@ def on_transit_in():
     current_action_index = 0
     action_lines, playback_current = playutils.load_playback(playback_recordings, playback_current)
 
+    #
+    global stop_playback_thread_func
+    stop_playback_thread_func = False
+    
+    global pause_playback_thread_func
+    pause_playback_thread_func = False
+
+    global playback_thread
+    playback_thread = threading.Thread(target=playback_thread_func, daemon=True)
+    playback_thread.start() 
+
 def on_stop():
-    print(os.path.basename(__file__) + " stopped")
+
+    #
+    global stop_playback_thread_func
+    stop_playback_thread_func = True
+
+    global pause_playback_thread_func
+    pause_playback_thread_func = True
+
+    playutils.keys_up()
+
+    global playback_thread
+    playback_thread.join()
+
+    log.info(os.path.basename(__file__) + " stopped")    
 
 def start():  
     global playback_recordings, playback_current, action_lines
     
     playback_recordings = playutils.initialize_playbacks(script_dir)
     action_lines, playback_current = playutils.load_playback(playback_recordings, playback_current)
+
+stop_playback_thread_func = False
+pause_playback_thread_func = False
+def playback_thread_func():
+    global stop_playback_thread_func
+    while not stop_playback_thread_func:
+        global pause_playback_thread_func
+        if not pause_playback_thread_func:                
+            process_playback()
+        else:
+            playutils.keys_up()
+        # time.sleep(0.0001)
 
 def process_playback():
     global action_lines, current_action_index, prev_time, playback_current
@@ -79,8 +119,6 @@ def process_transitions():
         prev_time = time.time()
 
 def update():    
-    
-    process_playback()
 
     process_transitions()
 

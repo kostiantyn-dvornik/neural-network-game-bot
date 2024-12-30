@@ -18,13 +18,13 @@ grabsize = 0
 dataset_dir = ""
 
 #[use]
-state = "find_enemy"
+state = "road"
 
 state_dir = os.path.join(script_dir, "..", "states", state)
 sys.path.append(state_dir)
 
 #[gen]
-import state_find_enemy as st
+import state_road as st
 
 params = st.params
 nnsize = params.get('nnsize', 256)
@@ -59,7 +59,7 @@ def get_image_resolution(image_path):
     with Image.open(image_path) as img:
         return img.size  # (width, height)
 
-def crop_image(image_path, crop_point=(0, 0), crop_size=(128, 128), target_size=(128,128)):
+def adjust_image(image_path, crop_point=(0, 0), crop_size=(0, 0), target_size=(128,128)):
     global processed_images
     with Image.open(image_path) as img:
         width, height = img.size
@@ -72,16 +72,19 @@ def crop_image(image_path, crop_point=(0, 0), crop_size=(128, 128), target_size=
             y = height - crop_size[1]
         
         # Crop the image
-        cropped_img = img.crop((x, y, x + crop_size[0], y + crop_size[1]))
-        resized_img = cropped_img.resize(target_size)
+        if crop_size != (0, 0):
+            cropped_img = img.crop((x, y, x + crop_size[0], y + crop_size[1]))
+            resized_img = cropped_img.resize(target_size)
+        else:
+            resized_img = img.resize(target_size)
+        
         
         if processed_images == 0:
-            processed_images += 1
-             # Show preview of cropped image
+            processed_images += 1             
             resized_img.show()  # This will open the image in the default viewer
             
             # Ask user if they want to save the cropped image
-            save_choice = input(f"Do you want to save the cropped image {image_path}? (y/n): ").strip().lower()
+            save_choice = input(f"Do you want to save the adjusted image {image_path}? (y/n): ").strip().lower()
             if save_choice == 'y':
                 resized_img.save(image_path)  # Overwrites the original image
                 print(f"Cropped image saved at {image_path}")
@@ -95,7 +98,7 @@ def crop_image(image_path, crop_point=(0, 0), crop_size=(128, 128), target_size=
 def check_images_resolution(folder_path):        
     for root, dirs, files in os.walk(folder_path):
         for file in files:
-            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff')):
+            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
                 image_path = os.path.join(root, file)
                 try:
                     resolution = get_image_resolution(image_path)
@@ -103,8 +106,8 @@ def check_images_resolution(folder_path):
 
                     # Check if resolution is wrong
                     if resolution != (nnsize, nnsize):
-                        print(f"Cropping {file} from point {(posx, posy)}")
-                        crop_image(image_path, (posx, posy), (grabsize, grabsize), (nnsize, nnsize))
+                        print(f"Processing {file} crop pos:{posx},{posy} grab size:{grabsize} nn size:{nnsize}")
+                        adjust_image(image_path, (posx, posy), (grabsize, grabsize), (nnsize, nnsize))
 
                 except Exception as e:
                     print(f"Could not open {file}: {e}")

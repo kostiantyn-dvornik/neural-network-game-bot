@@ -112,7 +112,7 @@ def update():
         transit_in()
     
     states[globals.CURRENT_STATE].update()
-    time.sleep(0.01)   
+    time.sleep(0.01)
 
 stop_grab_screen_thread_func = False
 def grab_screen_thread_func():

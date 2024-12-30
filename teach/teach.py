@@ -8,13 +8,13 @@ import tensorflow as tf
 from matplotlib import pyplot as plt
 
 #[use]
-state = "horizont"
+state = "road"
 
 state_dir = os.path.join(script_dir, "..", "states", state)
 sys.path.append(state_dir)
 
 #[gen]
-import state_horizont as st
+import state_road as st
 
 params = st.params
 

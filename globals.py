@@ -12,4 +12,4 @@ sys.path.append(script_dir)
 SCREENSHOT = None
 SCREENSHOT_LOCK = threading.Lock()
 
-CURRENT_STATE = "follow_road"
+CURRENT_STATE = "walk"

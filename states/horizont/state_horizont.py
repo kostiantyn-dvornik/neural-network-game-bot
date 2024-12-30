@@ -87,7 +87,7 @@ def is_transit_in():
     res = yhat[0]        
     ind = np.argmax(res)
 
-    print('Horizont ' + str(ind))
+    # print('Horizont ' + str(ind))
 
     global nnresult
     nnresult = ind
